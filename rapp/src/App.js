@@ -5,6 +5,7 @@ import {BrowserRouter, Route, Routes, createBrowserRouter, RouterProvider} from 
 import About from './pages/About';
 import ErrorPage from './pages/ErrorPage'
 import NavBar from './components/NavBar';
+import PostDetails from './pages/PostDetails';
 
 function App() {
   const router = createBrowserRouter([
@@ -12,6 +13,13 @@ function App() {
       path: "/",
       element: <Posts />,
       errorElement: <ErrorPage />,
+      exact: true
+    },
+    {
+      path: "/posts/:id",
+      element: <PostDetails />,
+      errorElement: <ErrorPage />,
+      exact: true
     },
     {
       path: "about",
