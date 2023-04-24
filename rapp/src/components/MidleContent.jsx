@@ -60,9 +60,7 @@ function MidleContent() {
     return ( 
         <div className='mt-2'>
 
-            <Modal visible={true}>
                 <PostForm create={createPost} />
-            </Modal>
             
             <PostFilter 
                 filter={filter}
