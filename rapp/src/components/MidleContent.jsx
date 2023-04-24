@@ -6,15 +6,28 @@ import PostFilter from './PostFilter';
 import axios from 'axios'
 import PostService from '../API/PostService';
 import { useFetching } from '../hooks/useFetching';
+import {getPageCount, getPagesArray} from '../utils/page';
+import Pagenations from './Paginations';
 
 function MidleContent() {    
     const defaultPosts = []
     const [posts, setPosts] = useState([...defaultPosts]);
     const [filter, setFilter] = useState({sort: '', query: ''})
+    const [totalPages, setTotolPages] = useState(0);
+    const [limit, setLimit] = useState(5);
+    const [page, setPage] = useState(1);
+
     const [fetchPosts, isLoading, postError] = useFetching(async () => {
-        const posts = await PostService.getAll();
-        setPosts(posts);
+        const response = await PostService.getAll(limit, page);
+        setPosts(response.data);
+
+        const totalCount = (response.headers['x-total-count']);
+        setTotolPages(getPageCount(totalCount, limit))
     });
+
+    const changePage = (p) => {
+        setPage(p)
+    }
 
     const sortedPosts = useMemo(() => {
         console.log('get sorted post: ' + filter.sort)
@@ -41,7 +54,7 @@ function MidleContent() {
 
     useEffect(() => {
         fetchPosts();
-    }, [])
+    }, [page])
 
 
     return ( 
@@ -53,7 +66,8 @@ function MidleContent() {
             
             <PostFilter 
                 filter={filter}
-                setFilter={setFilter}/>
+                setFilter={setFilter}
+            />
 
             {postError && <h1 className='text-danger'>Ошибка: ${postError}</h1>}
 
@@ -64,7 +78,11 @@ function MidleContent() {
                 </div>
                 }
             
-
+            <Pagenations
+                page={page}
+                changePage={changePage}
+                totalPages={totalPages}
+            />
         </div>
      );
 }
